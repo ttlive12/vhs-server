@@ -21,8 +21,8 @@ import {
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>('database.url'),
-        dbName: configService.get<string>('database.name'),
+        uri: configService.get<string>('db.uri'),
+        dbName: configService.get<string>('db.name') ?? 'HS',
         maxPoolSize: 30,
         minPoolSize: 5,
         socketTimeoutMS: 45_000,
@@ -43,5 +43,6 @@ import {
       { name: Translation.name, schema: TranslationSchema },
     ]),
   ],
+  exports: [MongooseModule],
 })
 export class DatabaseModule {}

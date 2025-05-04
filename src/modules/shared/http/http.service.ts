@@ -1,34 +1,29 @@
-import { Inject, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import axios, { type AxiosInstance } from 'axios';
 import axiosRetry from 'axios-retry';
 
 import { HttpConfig } from './http.interface';
 
-/**
- * HTTP 服务
- */
+@Injectable()
 export class HttpService {
   private readonly httpClient: AxiosInstance;
 
   private readonly logger = new Logger(HttpService.name);
 
-  constructor(@Inject('HTTP_CONFIG') private readonly httpConfig: HttpConfig) {
+  constructor(@Inject('HTTP_CONFIG') private readonly httpConfig?: HttpConfig) {
     this.httpClient = axios.create({
-      baseURL: this.httpConfig.baseUrl,
-      timeout: this.httpConfig.timeout,
-      maxRedirects: this.httpConfig.maxRedirects,
-      headers: this.httpConfig.headers,
+      ...this.httpConfig,
     });
 
     axiosRetry(this.httpClient, {
-      retries: 1,
+      retries: this.httpConfig?.retryConfig?.retries ?? 1,
       retryDelay: (retryCount) => {
         return Math.min(retryCount * 50, 2000);
       },
       onRetry: (retryCount, error) => {
         this.logger.log(`重试次数 ${retryCount} 次: ${error instanceof Error ? error.message : String(error)}`);
       },
-      ...this.httpConfig.retryConfig,
+      ...this.httpConfig?.retryConfig,
     });
 
     this.httpClient.interceptors.request.use((config) => {

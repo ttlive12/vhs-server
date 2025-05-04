@@ -6,13 +6,9 @@ import { HttpService } from './http.service';
 /**
  * HTTP 模块
  */
-@Module({
-  imports: [HttpModule],
-  providers: [HttpService],
-  exports: [HttpService],
-})
+@Module({})
 export class HttpModule {
-  static forRoot(httpConfig: HttpConfig): DynamicModule {
+  static forRoot(httpConfig?: HttpConfig): DynamicModule {
     return {
       module: HttpModule,
       providers: [
@@ -20,7 +16,9 @@ export class HttpModule {
           provide: 'HTTP_CONFIG',
           useValue: httpConfig,
         },
+        HttpService,
       ],
+      exports: [HttpService],
     };
   }
 }

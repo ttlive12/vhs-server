@@ -2,10 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { configuration } from './config';
-import { ArchetypesModule } from '@/modules/api/archetypes/archetypes.module';
-import { DecksModule } from '@/modules/api/decks/decks.module';
-import { HsguruModule } from '@/modules/crawler/hsguru/hsguru.module';
-import { DatabaseModule } from '@/modules/database/database.module';
+import { ApiModule } from '@/modules/api/api.module';
+import { CrawlerModule } from '@/modules/crawler/crawler.module';
 
 @Module({
   imports: [
@@ -14,12 +12,8 @@ import { DatabaseModule } from '@/modules/database/database.module';
       load: [configuration],
     }),
 
-    DatabaseModule,
-
-    HsguruModule,
-
-    DecksModule,
-    ArchetypesModule,
+    CrawlerModule,
+    ApiModule,
   ],
   controllers: [],
 })

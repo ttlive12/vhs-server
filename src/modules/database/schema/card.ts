@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, HydratedDocument } from 'mongoose';
 
-import { CLASS, RARITY } from '@/modules/shared/constants/cards';
+import { Class, Rarity } from '@/modules/shared/constants/cards';
 
 export type CardDocument = HydratedDocument<Card>;
 
@@ -31,25 +31,25 @@ export class Card extends Document {
   /**
    * 卡牌职业
    */
-  @Prop({ required: true, enum: CLASS })
+  @Prop({ enum: Class })
   cardClass: string;
 
   /**
    * 卡牌法力值消耗
    */
-  @Prop({ required: true })
+  @Prop()
   cost: number;
 
   /**
    * 卡牌稀有度
    */
-  @Prop({ required: true, enum: RARITY })
+  @Prop({ enum: Rarity })
   rarity: string;
 
   /**
    * 卡牌类型
    */
-  @Prop({ required: true })
+  @Prop()
   type: string;
 
   /**

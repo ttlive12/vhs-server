@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
       "@crawler/*": ["./src/crawler/*"],
       "@app/*": ["./src/app/*"],
@@ -34,7 +34,8 @@
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "outDir": "./dist"
   },
   "include": ["typings/global.d.ts", "src/**/*", "test/**/*", "bin/**/*"],
   "exclude": ["node_modules"]

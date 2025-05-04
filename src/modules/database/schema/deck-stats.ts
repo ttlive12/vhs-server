@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 
+import { Rank } from '@/modules/shared/constants/cards';
 import type { Opponent } from '@/modules/shared/interfaces/stats';
 
 export type DeckStatsDocument = HydratedDocument<DeckStats>;
@@ -20,7 +21,7 @@ export class DeckStats extends Document {
    * 卡组排名等级
    */
   @Prop({ required: true, index: true })
-  rank: string;
+  rank: Rank;
 
   /**
    * 对手数据

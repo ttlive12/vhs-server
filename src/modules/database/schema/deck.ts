@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 
 import { Card } from './card';
+import { Rank } from '@/modules/shared/constants/cards';
 
 /**
  * 卡组模型
@@ -72,7 +73,7 @@ export class Deck extends Document {
    * 卡组排名等级
    */
   @Prop({ required: true, index: true })
-  rank: string;
+  rank: Rank;
 
   /**
    * 卡组顺序

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
+import { middleware } from './app.middleware';
 import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
@@ -10,7 +11,7 @@ async function bootstrap(): Promise<void> {
   const logger = new Logger('Bootstrap');
 
   // 创建应用实例
-  const app = await NestFactory.create(AppModule);
+  const app = middleware(await NestFactory.create(AppModule));
   const configService = app.get(ConfigService);
 
   // 获取配置参数
@@ -31,14 +32,7 @@ async function bootstrap(): Promise<void> {
   );
 
   // Swagger文档配置
-  const config = new DocumentBuilder()
-    .setTitle('炉石传说服务')
-    .setDescription('炉石传说服务API文档')
-    .setVersion('1.0')
-    .addTag('炉石传说')
-    .addTag('卡组')
-    .addTag('爬虫')
-    .build();
+  const config = new DocumentBuilder().setTitle('炉石传说服务').setDescription('炉石传说服务API文档').setVersion('1.0').build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 

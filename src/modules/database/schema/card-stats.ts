@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 
-import { RANK } from '@/modules/shared/constants/cards';
+import { Rank } from '@/modules/shared/constants/cards';
 import { CardStat } from '@/modules/shared/interfaces/cards';
 
 export type CardStatsDocument = HydratedDocument<CardStats>;
@@ -19,8 +19,8 @@ export class CardStats extends Document {
   /**
    * 卡组排名等级
    */
-  @Prop({ required: true, index: true, enum: RANK })
-  rank: string;
+  @Prop({ required: true, index: true })
+  rank: Rank;
 
   /**
    * 卡牌统计数据

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, HydratedDocument } from 'mongoose';
 
-import { RANK } from '@/modules/shared/constants/cards';
+import { Rank } from '@/modules/shared/constants/cards';
 
 export type ArchetypesDocument = HydratedDocument<Archetypes>;
 
@@ -55,8 +55,8 @@ export class Archetypes extends Document {
   /**
    * 卡组排名等级
    */
-  @Prop({ required: true, index: true, enum: RANK })
-  rank: string;
+  @Prop({ required: true, index: true })
+  rank: Rank;
 }
 
 export const ArchetypesSchema = SchemaFactory.createForClass(Archetypes);
