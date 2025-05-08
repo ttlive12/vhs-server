@@ -1,1 +1,1 @@
-export * from './stats.dto';
+export * from './archetypes';

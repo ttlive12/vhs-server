@@ -78,13 +78,13 @@ module.exports = (async function config() {
         // #region import
         'import/no-default-export': 'error',
         'import/order': [
-          'error',
+          'warn',
           {
             groups: [
               ['builtin', 'external'],
               ['internal', 'parent', 'sibling', 'index'],
             ],
-            'newlines-between': 'always',
+            // 'newlines-between': 'always',
             alphabetize: { order: 'asc', caseInsensitive: true },
           },
         ],
@@ -93,19 +93,18 @@ module.exports = (async function config() {
 
         // #region @typescript-eslint
         '@typescript-eslint/class-methods-use-this': 'off',
-        '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'angle-bracket' }],
         '@typescript-eslint/init-declarations': ['error', 'never', { ignoreForLoopInit: true }],
-        '@typescript-eslint/naming-convention': [
-          'error',
-          { selector: 'default', format: ['strictCamelCase'] },
-          { selector: 'variable', format: ['strictCamelCase', 'UPPER_CASE', 'StrictPascalCase'] },
-          // https://github.com/microsoft/TypeScript/issues/9458
-          { selector: 'parameter', modifiers: ['unused'], format: ['strictCamelCase'], leadingUnderscore: 'allow' },
-          { selector: 'property', format: null },
-          { selector: 'typeProperty', format: null },
-          { selector: 'typeLike', format: ['StrictPascalCase'] },
-          { selector: 'enumMember', format: ['UPPER_CASE'] },
-        ],
+        // '@typescript-eslint/naming-convention': [
+        //   'error',
+        //   { selector: 'default', format: ['strictCamelCase'] },
+        //   { selector: 'variable', format: ['strictCamelCase', 'UPPER_CASE', 'StrictPascalCase'] },
+        //   // https://github.com/microsoft/TypeScript/issues/9458
+        //   { selector: 'parameter', modifiers: ['unused'], format: ['strictCamelCase'], leadingUnderscore: 'allow' },
+        //   { selector: 'property', format: null },
+        //   { selector: 'typeProperty', format: null },
+        //   { selector: 'typeLike', format: ['StrictPascalCase'] },
+        //   { selector: 'enumMember', format: ['UPPER_CASE'] },
+        // ],
         '@typescript-eslint/no-extraneous-class': 'off',
         '@typescript-eslint/no-magic-numbers': 'off',
         '@typescript-eslint/no-unsafe-member-access': 'off',
@@ -117,6 +116,7 @@ module.exports = (async function config() {
         '@typescript-eslint/prefer-destructuring': 'off',
         '@typescript-eslint/prefer-readonly': 'off',
         '@typescript-eslint/strict-boolean-expressions': 'off',
+        '@typescript-eslint/consistent-type-assertions': 'off',
         // #endregion
 
         // #region stylistic
@@ -148,6 +148,8 @@ module.exports = (async function config() {
         'unicorn/prefer-module': 'off',
         'unicorn/prefer-ternary': ['error', 'only-single-line'],
         'unicorn/prefer-top-level-await': 'off',
+        'unicorn/no-array-reduce': 'off',
+        'unicorn/no-array-for-each': 'off',
         // #endregion
       },
     },

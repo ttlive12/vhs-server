@@ -1,4 +1,6 @@
-export interface Card {
+import type { Mode, Rank } from '..';
+
+export interface ICard {
   /**
    * 卡牌ID
    */
@@ -40,10 +42,17 @@ export interface Card {
   text: string;
 }
 
+export interface IDeckCard extends Pick<ICard, 'id' | 'dbfId' | 'name' | 'cost' | 'rarity'> {
+  /**
+   * 卡牌数量
+   */
+  count: number;
+}
+
 /**
  * 卡牌统计数据
  */
-export interface CardStat extends Card {
+export interface ICardStat extends Pick<ICard, 'id' | 'dbfId' | 'name' | 'cost' | 'rarity'> {
   /**
    * 携带影响
    */
@@ -58,4 +67,14 @@ export interface CardStat extends Card {
    * 保留影响
    */
   keptImpact: number;
+}
+
+/**
+ * 留牌指南
+ */
+export interface IMulligan {
+  name: string;
+  rank: Rank;
+  mode: Mode;
+  cards: ICardStat[];
 }

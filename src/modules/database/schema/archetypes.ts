@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, HydratedDocument } from 'mongoose';
 
-import { Rank } from '@/modules/shared/constants/cards';
+import { Mode, Rank } from '@/modules/shared/constants/enums';
 
 export type ArchetypesDocument = HydratedDocument<Archetypes>;
 
@@ -19,7 +19,7 @@ export class Archetypes extends Document {
   /**
    * 卡组中文名称
    */
-  @Prop()
+  @Prop({ index: true })
   zhName: string;
 
   /**
@@ -50,13 +50,19 @@ export class Archetypes extends Document {
    * 爬升速度
    */
   @Prop()
-  ClimbingSpeed: number;
+  climbingSpeed: number;
 
   /**
    * 卡组排名等级
    */
-  @Prop({ required: true, index: true })
+  @Prop({ required: true, index: true, enum: Rank })
   rank: Rank;
+
+  /**
+   * 模式
+   */
+  @Prop({ required: true, index: true, enum: Mode })
+  mode: Mode;
 }
 
 export const ArchetypesSchema = SchemaFactory.createForClass(Archetypes);

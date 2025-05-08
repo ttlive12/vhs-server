@@ -10,13 +10,13 @@ export class Translation extends Document {
    * 英文名称
    */
   @Prop({ required: true, unique: true, index: true })
-  enName: string;
+  englishName: string;
 
   /**
    * 中文名称
    */
   @Prop()
-  zhName: string;
+  chineseName: string;
 }
 
 export const TranslationSchema = SchemaFactory.createForClass(Translation);

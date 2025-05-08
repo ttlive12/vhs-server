@@ -1,0 +1,24 @@
+{
+  "folders": [
+    {
+      "name": "Modules: Crawler",
+      "path": "src/modules/crawler/",
+    },
+    {
+      "name": "Modules: API",
+      "path": "src/modules/api/",
+    },
+    {
+      "name": "Modules: Database",
+      "path": "src/modules/database/",
+    },
+    {
+      "name": "Lib: Shared",
+      "path": "src/modules/shared/",
+    },
+    {
+      "name": "Full",
+      "path": ".",
+    },
+  ],
+}

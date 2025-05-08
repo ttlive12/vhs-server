@@ -1,6 +1,6 @@
-import type { Rank } from '../constants/cards';
+import type { Rank } from '../constants/enums';
 
-export interface Archetypes {
+export interface IArchetypes {
   /**
    * 卡组英文名称
    */
@@ -34,7 +34,7 @@ export interface Archetypes {
   /**
    * 爬升速度
    */
-  ClimbingSpeed: number;
+  climbingSpeed: number;
 
   /**
    * 卡组排名等级

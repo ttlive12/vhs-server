@@ -1,6 +1,7 @@
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { middleware } from './app.middleware';
@@ -11,7 +12,7 @@ async function bootstrap(): Promise<void> {
   const logger = new Logger('Bootstrap');
 
   // 创建应用实例
-  const app = middleware(await NestFactory.create(AppModule));
+  const app = middleware(await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter()));
   const configService = app.get(ConfigService);
 
   // 获取配置参数
@@ -25,7 +26,6 @@ async function bootstrap(): Promise<void> {
   // 全局验证管道
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // 去除非DTO中定义的属性
       transform: true, // 自动转换类型
       forbidNonWhitelisted: true, // 禁止非白名单属性
     }),

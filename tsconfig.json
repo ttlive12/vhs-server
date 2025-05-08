@@ -3,12 +3,10 @@
     "baseUrl": "./",
     "paths": {
       "@crawler/*": ["./src/crawler/*"],
-      "@app/*": ["./src/app/*"],
+      "@api/*": ["./src/api/*"],
+      "@database/*": ["./src/database/*"],
+      "@shared/*": ["./src/shared/*"],
       "@config/*": ["./src/config/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@types/*": ["./src/types/*"],
-      "@filters/*": ["./src/filters/*"],
-      "@interceptors/*": ["./src/interceptors/*"],
       "@/*": ["./src/*"]
     },
     "target": "es2022",
@@ -37,6 +35,6 @@
     "strictPropertyInitialization": false,
     "outDir": "./dist"
   },
-  "include": ["typings/global.d.ts", "src/**/*", "test/**/*", "bin/**/*"],
+  "include": ["typings/global.d.ts", "src/**/*", "test/**/*", "bin/**/*", "src/modules/api/decks/dto/decks.ts"],
   "exclude": ["node_modules"]
 }

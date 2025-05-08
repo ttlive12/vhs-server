@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 
-import { Rank } from '@/modules/shared/constants/cards';
-import { CardStat } from '@/modules/shared/interfaces/cards';
+import { Mode, Rank } from '@/modules/shared/constants/enums';
+import { ICardStat } from '@/modules/shared/interfaces/cards';
 
 export type CardStatsDocument = HydratedDocument<CardStats>;
 /**
@@ -14,7 +14,7 @@ export class CardStats extends Document {
    * 卡组英文名称
    */
   @Prop({ required: true, index: true })
-  deckName: string;
+  name: string;
 
   /**
    * 卡组排名等级
@@ -26,7 +26,13 @@ export class CardStats extends Document {
    * 卡牌统计数据
    */
   @Prop({ type: [{ type: MongooseSchema.Types.Mixed }] })
-  cards: CardStat[];
+  cards: ICardStat[];
+
+  /**
+   * 卡组模式
+   */
+  @Prop({ required: true, index: true, enum: Mode })
+  mode: Mode;
 }
 
 export const CardStatsSchema = SchemaFactory.createForClass(CardStats);

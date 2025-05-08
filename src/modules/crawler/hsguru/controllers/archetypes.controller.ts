@@ -1,19 +1,25 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Controller, Post, Body } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
 
+import { PostArchetypesDto } from '../dto/archetypes.dto';
 import { ArchetypesService } from '@/modules/crawler/hsguru/providers/archetypes.service';
-import { Format } from '@/modules/shared/constants/cards';
+import { ResponseData, success } from '@/modules/shared';
+
+@ApiTags('卡组类型')
 @Controller('archetypes')
 export class ArchetypesController {
   constructor(private readonly archetypesService: ArchetypesService) {}
 
-  @Get('getArchetypes')
-  @ApiOperation({ summary: '获取卡组' })
+  @Post('postArchetypes')
+  @ApiOperation({ summary: '爬取卡组类型数据' })
   @ApiResponse({
-    status: 200,
-    description: '获取卡组成功',
+    status: 201,
+    description: '爬取卡组类型数据成功',
   })
-  async getArchetypes(): Promise<void> {
-    await this.archetypesService.getArchetypes(Format.STANDARD);
+  @ApiBody({ type: PostArchetypesDto })
+  async postArchetypes(@Body() dto: PostArchetypesDto): Promise<ResponseData> {
+    const { mode } = dto;
+    await this.archetypesService.crawlAllArchetypes(mode);
+    return success('爬取卡组类型数据成功');
   }
 }

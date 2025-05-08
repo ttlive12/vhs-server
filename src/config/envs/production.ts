@@ -1,5 +1,3 @@
 export const config = {
-  db: {
-    name: 'prod',
-  },
+  env: 'production',
 };

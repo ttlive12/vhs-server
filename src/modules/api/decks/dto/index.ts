@@ -1,1 +1,1 @@
-export * from './ranks.dto';
+export * from './decks';

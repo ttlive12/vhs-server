@@ -1,6 +1,19 @@
-import { Controller } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Query } from '@nestjs/common';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
+
+import { ArchetypesService } from './archetypes.service';
+import { GetArchetypesDto } from './dto';
+import { IArchetypes, Rank } from '@/modules/shared';
 
 @ApiTags('卡组类型')
 @Controller('archetypes')
-export class ArchetypesController {}
+export class ArchetypesController {
+  constructor(private readonly archetypesService: ArchetypesService) {}
+
+  @ApiOperation({ summary: '获取卡组类型排行' })
+  @Get('getArchetypes')
+  async getArchetypes(@Query() dto: GetArchetypesDto): Promise<Record<Rank, IArchetypes[]>> {
+    const { mode } = dto;
+    return await this.archetypesService.getArchetypes(mode);
+  }
+}

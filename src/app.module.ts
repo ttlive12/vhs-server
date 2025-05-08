@@ -4,7 +4,6 @@ import { ConfigModule } from '@nestjs/config';
 import { configuration } from './config';
 import { ApiModule } from '@/modules/api/api.module';
 import { CrawlerModule } from '@/modules/crawler/crawler.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot({

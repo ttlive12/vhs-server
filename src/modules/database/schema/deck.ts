@@ -1,8 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 
-import { Card } from './card';
-import { Rank } from '@/modules/shared/constants/cards';
+import { IDeckCard, Mode, Rank } from '@/modules/shared';
 
 /**
  * 卡组模型
@@ -43,19 +42,13 @@ export class Deck extends Document {
    * 卡组卡牌列表
    */
   @Prop({ type: [{ type: MongooseSchema.Types.Mixed }] })
-  cards: Card[];
+  cards: IDeckCard[];
 
   /**
    * 卡组尘数
    */
   @Prop()
   dust: number;
-
-  /**
-   * 传说数量
-   */
-  @Prop()
-  legendaryCardNum: number;
 
   /**
    * 对局数
@@ -72,26 +65,14 @@ export class Deck extends Document {
   /**
    * 卡组排名等级
    */
-  @Prop({ required: true, index: true })
+  @Prop({ required: true, index: true, enum: Rank })
   rank: Rank;
-
-  /**
-   * 卡组顺序
-   */
-  @Prop()
-  order: number;
 
   /**
    * 游戏模式 (standard/wild)
    */
-  @Prop({ required: true, index: true, enum: ['standard', 'wild'] })
-  mode: string;
-
-  /**
-   * 是否过去一天的数据
-   */
-  @Prop({ default: false, index: true })
-  isPastDay: boolean;
+  @Prop({ required: true, index: true, enum: Mode })
+  mode: Mode;
 }
 
 export const DeckSchema = SchemaFactory.createForClass(Deck);
