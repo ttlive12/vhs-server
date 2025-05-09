@@ -6,14 +6,16 @@ import { ArchetypesService } from '../hsguru/providers/archetypes.service';
 import { DeckDetailService } from '../hsguru/providers/deckdetail.service';
 import { DecksService } from '../hsguru/providers/decks.service';
 import { MulliganService } from '../hsguru/providers/mulligan.service';
+import { DatabaseService } from '@/modules/database/database.service';
 import { Mode } from '@/modules/shared';
+
 /**
  * 爬虫定时任务服务
  * 提供卡组数据爬取功能，支持标准/狂野/全部模式
  */
 @Injectable()
 export class CrawlerTaskService {
-  private readonly logger = new Logger(CrawlerTaskService.name);
+  private readonly logger = new Logger('爬虫任务服务');
 
   // eslint-disable-next-line @typescript-eslint/max-params
   constructor(
@@ -23,6 +25,7 @@ export class CrawlerTaskService {
     private readonly decksService: DecksService,
     private readonly mulliganService: MulliganService,
     private readonly deckDetailService: DeckDetailService,
+    private readonly databaseService: DatabaseService,
   ) {}
 
   /**
@@ -89,6 +92,9 @@ export class CrawlerTaskService {
 
     // 卡组对战数据爬取
     await this.deckDetailService.crawlAllDeckDetails(mode);
+
+    // 同步数据到api数据库
+    await this.databaseService.syncCrawlerToApi();
 
     this.logger.log(`${mode}模式数据爬取完成, 当前时间: ${new Date().toISOString()}, 耗时: ${(Date.now() - start.getTime()) / 1000}秒`);
   }

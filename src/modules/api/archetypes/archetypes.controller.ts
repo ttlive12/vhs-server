@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 import { ArchetypesService } from './archetypes.service';
 import { GetArchetypesDto } from './dto';
-import { IArchetypes, Rank } from '@/modules/shared';
+import { IArchetypes, Rank, successWithData, ResponseData } from '@/modules/shared';
 
 @ApiTags('卡组类型')
 @Controller('archetypes')
@@ -12,8 +12,9 @@ export class ArchetypesController {
 
   @ApiOperation({ summary: '获取卡组类型排行' })
   @Get('getArchetypes')
-  async getArchetypes(@Query() dto: GetArchetypesDto): Promise<Record<Rank, IArchetypes[]>> {
+  async getArchetypes(@Query() dto: GetArchetypesDto): Promise<ResponseData<Record<Rank, IArchetypes[]>>> {
     const { mode } = dto;
-    return await this.archetypesService.getArchetypes(mode);
+    const archetypes = await this.archetypesService.getArchetypes(mode);
+    return successWithData(archetypes);
   }
 }

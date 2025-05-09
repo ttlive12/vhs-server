@@ -10,6 +10,6 @@ import { CrawlerTaskModule } from './tasks/crawler-task.module';
  */
 @Module({
   imports: [HsguruModule, BaseModule, CrawlerTaskModule],
-  exports: [],
+  exports: [CrawlerTaskModule],
 })
 export class CrawlerModule {}

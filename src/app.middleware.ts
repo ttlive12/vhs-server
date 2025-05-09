@@ -5,9 +5,9 @@ import compression from 'compression';
 import { AllExceptionsFilter, TimingInterceptor } from '@/modules/shared';
 
 export function middleware(app: INestApplication): INestApplication {
-  app.useGlobalFilters(new AllExceptionsFilter(app.get(HttpAdapterHost)));
   app.use(compression());
-  app.useGlobalInterceptors(new TimingInterceptor());
   app.enableCors();
+  app.useGlobalFilters(new AllExceptionsFilter(app.get(HttpAdapterHost)));
+  app.useGlobalInterceptors(new TimingInterceptor());
   return app;
 }
