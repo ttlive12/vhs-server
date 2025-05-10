@@ -1,7 +1,7 @@
 import { HttpService as NestHttpService } from '@nestjs/axios';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
+import axios, { AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
 import axiosRetry from 'axios-retry';
 import throttle from 'lodash/throttle';
 import { Observable, firstValueFrom } from 'rxjs';
@@ -46,16 +46,36 @@ export class HttpService extends NestHttpService {
       },
     });
 
+    // 添加请求拦截器，转换URL
+    this.axiosRef.interceptors.request.use((config) => {
+      const url = axios.getUri(config);
+
+      if (url.includes('hsguru.com')) {
+        const urlObj = new URL(url);
+        const domain = urlObj.hostname;
+        const pathname = urlObj.pathname;
+        const search = urlObj.search;
+
+        config.url = `https://api.cloudbypass.com${pathname}${search}`;
+        config.headers['x-cb-host'] = domain;
+      }
+
+      return config;
+    });
+
     const queueNumber = this.configService.get<number>('http.queueConfig.concurrency') ?? 4;
     this.queueService.initQueues(queueNumber);
   }
 
   /**
-   * 获取请求配置，并添加x-session头
+   * 获取请求配置，并添加必要的头信息
    */
   private getRequestConfig(queueIndex: number, config?: AxiosRequestConfig): AxiosRequestConfig {
     const headers = Object.assign({}, config?.headers ?? {});
-    headers['x-session'] = `${queueIndex}`;
+    headers['x-cb-part'] = `${queueIndex}`;
+    headers['x-cb-version'] = '2';
+    headers['x-cb-apiKey'] = this.configService.get<string>('cb.apiKey');
+    headers['x-cb-proxy'] = this.configService.get<string>('cb.proxy');
 
     return {
       ...config,

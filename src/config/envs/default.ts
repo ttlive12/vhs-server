@@ -18,4 +18,8 @@ export const config = {
     },
     timeout: Number.parseInt(process.env['HTTP_TIMEOUT'] ?? '10000', 10),
   },
+  cb: {
+    apiKey: process.env['CB_API_KEY'] ?? '241eeebbf0344cadbc9e1898ff7a068b',
+    proxy: process.env['CB_PROXY'] ?? `http:s403:s403z@14.18.67.240:29100`,
+  },
 };
