@@ -59,7 +59,7 @@ export class Deck extends Document {
   /**
    * 胜率
    */
-  @Prop()
+  @Prop({ index: true })
   winrate: number;
 
   /**
