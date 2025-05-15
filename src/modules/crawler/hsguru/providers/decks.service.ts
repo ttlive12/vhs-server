@@ -81,6 +81,7 @@ export class DecksService {
 
       for (const minGames of DECK_SEQUENCE[rank]) {
         decks = await this.crawlDecks(name, mode, rank, minGames);
+        this.logger.log(`模式：${mode} 卡组类型：${name} 段位：${rank} 场次：${minGames} 获取 ${decks.length} 个卡组`);
         if (decks.length >= 3) {
           break;
         }

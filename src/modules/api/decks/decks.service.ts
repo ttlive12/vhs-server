@@ -17,7 +17,11 @@ export class DecksService {
   constructor(@InjectApiModel(Deck.name) private decksModel: Model<Deck>) {}
 
   async getDecks(mode: Mode, archetype: string): Promise<Record<Rank, IDeck[]>> {
-    const decks = await this.decksModel.find({ mode, name: archetype }, {}, { sort: { winrate: -1 }, lean: true });
+    const decks = await this.decksModel.find(
+      { mode, name: { $regex: archetype, $options: 'i' } },
+      {},
+      { sort: { winrate: -1 }, lean: true },
+    );
     const groupedDecks = groupBy<IDeck>(decks, 'rank') as Record<Rank, IDeck[]>;
     return groupedDecks;
   }

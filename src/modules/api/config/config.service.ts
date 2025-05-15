@@ -82,7 +82,7 @@ export class ConfigService {
         const diffMinutes = Math.floor((now.getTime() - lastUpdateTime.getTime()) / (1000 * 60));
         description = `${diffMinutes} 分钟前`;
       } else {
-        description = `${diffHours} 小时前`;
+        description = `${diffHours} 小时内`;
       }
     } else if (diffHours < 24) {
       // 24小时内
@@ -90,7 +90,7 @@ export class ConfigService {
     } else {
       // 超过24小时
       const diffDays = Math.floor(diffHours / 24);
-      description = `${diffDays} 天前`;
+      description = `${diffDays} 天内`;
     }
 
     return {
