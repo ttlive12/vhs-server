@@ -3,6 +3,8 @@ import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 
 import { ArchetypesModule } from './archetypes/archetypes.module';
+import { ArenaModule } from './arena/arena.module';
+import { ConfigModule } from './config/config.module';
 import { DeckDetailsModule } from './deckdetails/decks.module';
 import { DecksModule } from './decks/decks.module';
 import { MulliganModule } from './mulligan/mulligan.module';
@@ -21,6 +23,8 @@ import { MulliganModule } from './mulligan/mulligan.module';
     DecksModule,
     MulliganModule,
     DeckDetailsModule,
+    ConfigModule,
+    ArenaModule,
   ],
   controllers: [],
   providers: [

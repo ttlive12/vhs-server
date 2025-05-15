@@ -22,4 +22,11 @@ export const config = {
     apiKey: process.env['CB_API_KEY'] ?? '241eeebbf0344cadbc9e1898ff7a068b',
     proxy: process.env['CB_PROXY'] ?? `http:s403:s403z@14.18.67.240:29100`,
   },
+  crawler: {
+    cron: {
+      standard: process.env['CRAWLER_CRON_STANDARD'] ?? '0 5 * * *', // 每天早上5点
+      wild: process.env['CRAWLER_CRON_WILD'] ?? '0 12 */2 * *', // 每两天中午12点
+      arena: process.env['CRAWLER_CRON_ARENA'] ?? '0 18 * * *', // 每天晚上6点
+    },
+  },
 };

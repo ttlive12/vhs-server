@@ -1,17 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { Model } from 'mongoose';
 import { CardsService } from '../base/providers/cards.service';
 import { TranslationService } from '../base/providers/translation.service';
 import { ArchetypesService } from '../hsguru/providers/archetypes.service';
 import { DeckDetailService } from '../hsguru/providers/deckdetail.service';
 import { DecksService } from '../hsguru/providers/decks.service';
 import { MulliganService } from '../hsguru/providers/mulligan.service';
+import { ArenaService } from '../hsreplay/providers';
+import { InjectApiModel } from '@/modules/database';
 import { DatabaseService } from '@/modules/database/database.service';
+import { Config } from '@/modules/database/schema';
 import { Mode } from '@/modules/shared';
 
 /**
  * 爬虫定时任务服务
- * 提供卡组数据爬取功能，支持标准/狂野/全部模式
+ * 提供卡组数据爬取功能，支持标准/狂野/竞技场模式
  */
 @Injectable()
 export class CrawlerTaskService {
@@ -26,16 +30,48 @@ export class CrawlerTaskService {
     private readonly mulliganService: MulliganService,
     private readonly deckDetailService: DeckDetailService,
     private readonly databaseService: DatabaseService,
+    private readonly arenaService: ArenaService,
+    @InjectApiModel(Config.name)
+    private readonly configModel: Model<Config>,
   ) {}
 
   /**
-   * 每天凌晨2点自动爬取所有模式数据
+   * 更新最后更新时间
    */
-  @Cron(CronExpression.EVERY_DAY_AT_2AM)
-  async handleCronTask(): Promise<void> {
-    this.logger.log('开始执行每日爬虫任务');
-    await this.crawlAllData();
-    this.logger.log('每日爬虫任务执行完成');
+  private async updateLastUpdateTime(): Promise<void> {
+    const now = new Date();
+    await this.configModel.findOneAndUpdate({ type: 'lastUpdate' }, { lastUpdateTime: now }, { upsert: true, new: true });
+    this.logger.log(`最后更新时间已更新: ${now.toISOString()}`);
+  }
+
+  /**
+   * 标准模式数据爬取 - 每天早上5点
+   */
+  @Cron(CronExpression.EVERY_DAY_AT_5AM)
+  async handleStandardCrawlTask(): Promise<void> {
+    this.logger.log('开始执行标准模式爬虫任务');
+    await this.crawlDataByMode(Mode.STANDARD);
+    this.logger.log('标准模式爬虫任务执行完成');
+  }
+
+  /**
+   * 狂野模式数据爬取 - 每两天中午12点
+   */
+  @Cron('0 12 */2 * *')
+  async handleWildCrawlTask(): Promise<void> {
+    this.logger.log('开始执行狂野模式爬虫任务');
+    await this.crawlDataByMode(Mode.WILD);
+    this.logger.log('狂野模式爬虫任务执行完成');
+  }
+
+  /**
+   * 竞技场模式数据爬取 - 每天晚上6点
+   */
+  @Cron(CronExpression.EVERY_DAY_AT_6PM)
+  async handleArenaCrawlTask(): Promise<void> {
+    this.logger.log('开始执行竞技场模式爬虫任务');
+    await this.crawlArenaData();
+    this.logger.log('竞技场模式爬虫任务执行完成');
   }
 
   /**
@@ -47,13 +83,37 @@ export class CrawlerTaskService {
 
     if (mode === 'all') {
       await this.crawlAllData();
-      return;
+    } else {
+      // 根据模式爬取数据的具体实现
+      await this.processCrawlingForMode(mode);
     }
 
-    // 根据模式爬取数据的具体实现
-    await this.processCrawlingForMode(mode);
+    // 更新最后更新时间
+    await this.updateLastUpdateTime();
 
     this.logger.log(`${mode}模式数据爬取完成`);
+  }
+
+  /**
+   * 爬取竞技场数据
+   */
+  async crawlArenaData(): Promise<void> {
+    const start = new Date();
+    this.logger.log(`开始爬取竞技场模式数据, 当前时间: ${start.toISOString()}`);
+
+    // 基础数据爬取：卡牌数据，翻译数据
+    await this.cardsService.getCards();
+
+    // 爬取竞技场数据
+    await this.arenaService.crawlAllArenaData();
+
+    // 同步数据到api数据库
+    await this.databaseService.syncCrawlerToApi();
+
+    // 更新最后更新时间
+    await this.updateLastUpdateTime();
+
+    this.logger.log(`竞技场模式数据爬取完成, 当前时间: ${new Date().toISOString()}, 耗时: ${(Date.now() - start.getTime()) / 1000}秒`);
   }
 
   /**
@@ -65,6 +125,7 @@ export class CrawlerTaskService {
     // 串行爬取不同模式的数据
     await this.processCrawlingForMode(Mode.STANDARD);
     await this.processCrawlingForMode(Mode.WILD);
+    await this.crawlArenaData();
 
     this.logger.log('所有模式数据爬取完成');
   }

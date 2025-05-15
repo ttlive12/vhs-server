@@ -17,21 +17,43 @@ import {
   ArchetypesSchema,
   DeckDetails,
   DeckDetailsSchema,
+  Config,
+  ConfigSchema,
+  SpecialDate,
+  SpecialDateSchema,
+  ArenaClass,
+  ArenaClassSchema,
+  ArenaCard,
+  ArenaCardSchema,
 } from './schema';
 
-const modelFactory = [
-  // 卡牌数据
-  { name: Card.name, schema: CardSchema },
+const baseModelFactory = [
   // 卡组数据
   { name: Deck.name, schema: DeckSchema },
   // 卡组对战数据
   { name: DeckDetails.name, schema: DeckDetailsSchema },
   // 卡组类型留牌数据
   { name: CardStats.name, schema: CardStatsSchema },
-  // 翻译数据
-  { name: Translation.name, schema: TranslationSchema },
   // 卡组类型 (Archetypes) 数据
   { name: Archetypes.name, schema: ArchetypesSchema },
+  // 竞技场职业数据
+  { name: ArenaClass.name, schema: ArenaClassSchema },
+  // 竞技场卡牌数据
+  { name: ArenaCard.name, schema: ArenaCardSchema },
+];
+
+const apiModelFactory = [
+  // 配置数据
+  { name: Config.name, schema: ConfigSchema },
+  // 特殊日期数据
+  { name: SpecialDate.name, schema: SpecialDateSchema },
+  // 翻译数据
+  { name: Translation.name, schema: TranslationSchema },
+];
+
+const crawlerModelFactory = [
+  // 卡牌数据
+  { name: Card.name, schema: CardSchema },
 ];
 
 @Module({
@@ -64,8 +86,10 @@ const modelFactory = [
       }),
       connectionName: 'crawler',
     }),
-    MongooseModule.forFeature(modelFactory, 'api'),
-    MongooseModule.forFeature(modelFactory, 'crawler'),
+    MongooseModule.forFeature(baseModelFactory, 'api'),
+    MongooseModule.forFeature(baseModelFactory, 'crawler'),
+    MongooseModule.forFeature(apiModelFactory, 'api'),
+    MongooseModule.forFeature(crawlerModelFactory, 'crawler'),
   ],
   providers: [DatabaseService],
   controllers: [DatabaseController],

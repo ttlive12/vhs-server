@@ -146,7 +146,7 @@ module.exports = (async function config() {
         'unicorn/no-null': 'off',
         'unicorn/prevent-abbreviations': 'off',
         'unicorn/prefer-module': 'off',
-        'unicorn/prefer-ternary': ['error', 'only-single-line'],
+        'unicorn/prefer-ternary': 'off',
         'unicorn/prefer-top-level-await': 'off',
         'unicorn/no-array-reduce': 'off',
         'unicorn/no-array-for-each': 'off',

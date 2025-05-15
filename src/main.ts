@@ -37,12 +37,12 @@ async function bootstrap(): Promise<void> {
   SwaggerModule.setup('docs', app, document);
 
   // 启动应用
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
 
   // 记录启动信息
   logger.log(`服务模式: ${serviceMode.toUpperCase()}`);
-  logger.log(`服务已启动: http://localhost:${port}`);
-  logger.log(`API文档地址: http://localhost:${port}/docs`);
+  logger.log(`服务已启动: http://0.0.0.0:${port}`);
+  logger.log(`API文档地址: http://0.0.0.0:${port}/docs`);
 }
 
 // 启动应用
