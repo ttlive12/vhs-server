@@ -12,6 +12,7 @@ import { InjectApiModel } from '@/modules/database';
 import { DatabaseService } from '@/modules/database/database.service';
 import { Config } from '@/modules/database/schema';
 import { Mode } from '@/modules/shared';
+import { HttpService } from '@/modules/shared/http/http.service';
 
 /**
  * 爬虫定时任务服务
@@ -31,6 +32,7 @@ export class CrawlerTaskService {
     private readonly deckDetailService: DeckDetailService,
     private readonly databaseService: DatabaseService,
     private readonly arenaService: ArenaService,
+    private readonly httpService: HttpService,
     @InjectApiModel(Config.name)
     private readonly configModel: Model<Config>,
   ) {}
@@ -42,6 +44,16 @@ export class CrawlerTaskService {
     const now = new Date();
     await this.configModel.findOneAndUpdate({ type: 'lastUpdate' }, { lastUpdateTime: now }, { upsert: true, new: true });
     this.logger.log(`最后更新时间已更新: ${now.toISOString()}`);
+  }
+
+  /**
+   * 测试网站反爬状态
+   * 在爬虫任务执行前检测网站是否开启了反爬机制
+   */
+  private async testAntiCrawlStatus(): Promise<void> {
+    this.logger.log('开始测试网站反爬状态');
+    await this.httpService.testAntiCrawl();
+    this.logger.log('网站反爬状态测试完成');
   }
 
   /**
@@ -81,6 +93,8 @@ export class CrawlerTaskService {
   async crawlDataByMode(mode: Mode | 'all'): Promise<void> {
     this.logger.log(`开始爬取${mode}模式数据`);
 
+    await this.testAntiCrawlStatus();
+
     if (mode === 'all') {
       await this.crawlAllData();
     } else {
@@ -109,9 +123,6 @@ export class CrawlerTaskService {
 
     // 同步数据到api数据库
     await this.databaseService.syncCrawlerToApi();
-
-    // 更新最后更新时间
-    await this.updateLastUpdateTime();
 
     this.logger.log(`竞技场模式数据爬取完成, 当前时间: ${new Date().toISOString()}, 耗时: ${(Date.now() - start.getTime()) / 1000}秒`);
   }
@@ -157,6 +168,6 @@ export class CrawlerTaskService {
     // 同步数据到api数据库
     await this.databaseService.syncCrawlerToApi();
 
-    this.logger.log(`${mode}模式数据爬取完成, 当前时间: ${new Date().toISOString()}, 耗时: ${(Date.now() - start.getTime()) / 1000}秒`);
+    this.logger.log(`${mode}模式数据爬取完成, 耗时: ${(Date.now() - start.getTime()) / 1000}秒`);
   }
 }
