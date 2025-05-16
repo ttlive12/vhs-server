@@ -63,7 +63,7 @@ export class HttpService extends NestHttpService {
     this.axiosRef.interceptors.request.use((config) => {
       const url = axios.getUri(config);
 
-      if (HttpService.useCloudbypass && (url.includes('hsguru.com') || url.includes('hsreplay.net'))) {
+      if ((HttpService.useCloudbypass && url.includes('hsguru.com')) || url.includes('hsreplay.net')) {
         const urlObj = new URL(url);
         const domain = urlObj.hostname;
         const pathname = urlObj.pathname;
