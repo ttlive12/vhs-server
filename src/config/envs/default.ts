@@ -11,7 +11,7 @@ export const config = {
   serviceMode: process.env['SERVICE_MODE'] ?? 'all',
   http: {
     retryConfig: {
-      retries: Number.parseInt(process.env['HTTP_RETRY_CONFIG_RETRIES'] ?? '3', 10),
+      retries: Number.parseInt(process.env['HTTP_RETRY_CONFIG_RETRIES'] ?? '5', 10),
     },
     queueConfig: {
       concurrency: Number.parseInt(process.env['HTTP_QUEUE_CONFIG_CONCURRENCY'] ?? '4', 10),

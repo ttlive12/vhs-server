@@ -33,7 +33,7 @@ export class HttpService extends NestHttpService {
 
     // 配置重试机制
     axiosRetry(this.axiosRef, {
-      retries: this.configService.get<number>('http.retryConfig.retries') ?? 3,
+      retries: this.configService.get<number>('http.retryConfig.retries') ?? 5,
       retryCondition: (error) => {
         // 详细记录错误信息，帮助调试
         this.logger.error(`请求错误: ${error.code}, 消息: ${error.message}`);
@@ -63,7 +63,7 @@ export class HttpService extends NestHttpService {
     this.axiosRef.interceptors.request.use((config) => {
       const url = axios.getUri(config);
 
-      if (url.includes('hsguru.com') && this.useCloudbypass) {
+      if ((url.includes('hsguru.com') && this.useCloudbypass) || url.includes('hsreplay.net')) {
         const urlObj = new URL(url);
         const domain = urlObj.hostname;
         const pathname = urlObj.pathname;
