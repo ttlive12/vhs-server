@@ -15,7 +15,7 @@ import { QueueService } from './queue.service';
 export class HttpService extends NestHttpService {
   private readonly logger = new Logger();
   private logQueueStatus: (name?: string) => void;
-  private useCloudbypass = true; // 默认启用cloudbypass服务
+  private static useCloudbypass = true; // 默认启用cloudbypass服务
   private consecutiveFailures = 0; // 连续失败次数计数
   private failureThreshold = 3; // 连续失败阈值，超过此值将启用cloudbypass
 
@@ -43,9 +43,9 @@ export class HttpService extends NestHttpService {
         this.logger.log(`连续失败次数: ${this.consecutiveFailures}/${this.failureThreshold}`);
 
         // 如果连续失败次数超过阈值，启用cloudbypass
-        if (this.consecutiveFailures >= this.failureThreshold && !this.useCloudbypass) {
+        if (this.consecutiveFailures >= this.failureThreshold && !HttpService.useCloudbypass) {
           this.logger.log(`连续失败次数达到阈值，启用cloudbypass服务`);
-          this.useCloudbypass = true;
+          HttpService.useCloudbypass = true;
         }
 
         return Boolean(axiosRetry.isNetworkOrIdempotentRequestError(error) || (error.response && error.response.status >= 300));
@@ -63,7 +63,7 @@ export class HttpService extends NestHttpService {
     this.axiosRef.interceptors.request.use((config) => {
       const url = axios.getUri(config);
 
-      if ((url.includes('hsguru.com') && this.useCloudbypass) || url.includes('hsreplay.net')) {
+      if (HttpService.useCloudbypass && (url.includes('hsguru.com') || url.includes('hsreplay.net'))) {
         const urlObj = new URL(url);
         const domain = urlObj.hostname;
         const pathname = urlObj.pathname;
@@ -96,8 +96,10 @@ export class HttpService extends NestHttpService {
   async testAntiCrawl(url = 'https://www.hsguru.com/', retries = 2): Promise<boolean> {
     this.logger.log(`开始测试网站反爬状态: ${url}`);
 
-    // 临时禁用cloudbypass进行测试
-    this.useCloudbypass = false;
+    // 禁用cloudbypass进行测试
+    const previousState = HttpService.useCloudbypass;
+    HttpService.useCloudbypass = false;
+    this.logger.log(`已禁用cloudbypass进行测试，当前状态: ${previousState}`);
 
     for (let i = 0; i < retries; i++) {
       try {
@@ -109,7 +111,7 @@ export class HttpService extends NestHttpService {
 
         if (hasExpectedContent) {
           this.logger.log(`直接访问成功，不需要使用cloudbypass`);
-          this.useCloudbypass = false;
+          HttpService.useCloudbypass = false;
           return false;
         }
       } catch (error: unknown) {
@@ -120,7 +122,13 @@ export class HttpService extends NestHttpService {
 
     // 所有测试都失败，需要使用cloudbypass
     this.logger.log(`测试失败，将使用cloudbypass服务`);
-    this.useCloudbypass = true;
+    HttpService.useCloudbypass = true;
+
+    // 记录状态变化
+    if (previousState !== HttpService.useCloudbypass) {
+      this.logger.log(`cloudbypass状态已从 ${previousState} 变为 ${HttpService.useCloudbypass}`);
+    }
+
     return true;
   }
 
@@ -129,7 +137,7 @@ export class HttpService extends NestHttpService {
    * @param use 是否使用
    */
   setUseCloudbypass(use: boolean): void {
-    this.useCloudbypass = use;
+    HttpService.useCloudbypass = use;
     this.logger.log(`手动${use ? '启用' : '禁用'}cloudbypass服务`);
   }
 
@@ -139,7 +147,7 @@ export class HttpService extends NestHttpService {
   private getRequestConfig(queueIndex: number, config?: AxiosRequestConfig): AxiosRequestConfig {
     const headers = Object.assign({}, config?.headers ?? {});
 
-    if (this.useCloudbypass) {
+    if (HttpService.useCloudbypass) {
       headers['x-cb-part'] = `${queueIndex}`;
       headers['x-cb-version'] = '2';
       headers['x-cb-apiKey'] = this.configService.get<string>('cb.apiKey');
