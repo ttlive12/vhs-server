@@ -17,7 +17,7 @@ import { MulliganModule } from './mulligan/mulligan.module';
   imports: [
     CacheModule.register({
       ttl: 60 * 60, // 缓存时间1小时
-      max: 200, // 最大缓存条目数
+      max: 1000, // 最大缓存条目数
     }),
     ArchetypesModule,
     DecksModule,

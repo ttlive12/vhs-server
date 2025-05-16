@@ -16,8 +16,8 @@ export class HttpService extends NestHttpService {
   private readonly logger = new Logger();
   private logQueueStatus: (name?: string) => void;
   private static useCloudbypass = true; // 默认启用cloudbypass服务
-  private consecutiveFailures = 0; // 连续失败次数计数
-  private failureThreshold = 3; // 连续失败阈值，超过此值将启用cloudbypass
+  private static consecutiveFailures = 0; // 连续失败次数计数
+  private static failureThreshold = 3; // 连续失败阈值，超过此值将启用cloudbypass
 
   constructor(
     @Inject('AXIOS_INSTANCE_TOKEN') axiosRef: AxiosInstance,
@@ -39,11 +39,11 @@ export class HttpService extends NestHttpService {
         this.logger.error(`请求错误: ${error.code}, 消息: ${error.message}`);
 
         // 增加连续失败计数
-        this.consecutiveFailures++;
-        this.logger.log(`连续失败次数: ${this.consecutiveFailures}/${this.failureThreshold}`);
+        HttpService.consecutiveFailures++;
+        this.logger.log(`连续失败次数: ${HttpService.consecutiveFailures}/${HttpService.failureThreshold}`);
 
         // 如果连续失败次数超过阈值，启用cloudbypass
-        if (this.consecutiveFailures >= this.failureThreshold && !HttpService.useCloudbypass) {
+        if (HttpService.consecutiveFailures >= HttpService.failureThreshold && !HttpService.useCloudbypass) {
           this.logger.log(`连续失败次数达到阈值，启用cloudbypass服务`);
           HttpService.useCloudbypass = true;
         }
@@ -51,7 +51,7 @@ export class HttpService extends NestHttpService {
         return Boolean(axiosRetry.isNetworkOrIdempotentRequestError(error) || (error.response && error.response.status >= 300));
       },
       retryDelay: (retryCount) => {
-        const delay = Math.min(retryCount * 2000, 8000);
+        const delay = retryCount * 5000;
         return delay;
       },
       onRetry: (retryCount, _, requestConfig) => {
@@ -84,7 +84,7 @@ export class HttpService extends NestHttpService {
     // 响应拦截器，重置连续失败计数
     this.axiosRef.interceptors.response.use((response) => {
       // 成功响应，重置连续失败计数
-      this.consecutiveFailures = 0;
+      HttpService.consecutiveFailures = 0;
       return response;
     });
 
