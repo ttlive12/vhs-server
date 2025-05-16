@@ -67,6 +67,7 @@ export class HttpService extends NestHttpService {
       const pathname = urlObj.pathname;
       const search = urlObj.search;
       if (url.includes('hsreplay.net')) {
+        config.url = `https://api.cloudbypass.com${pathname}${search}`;
         config.headers['x-cb-version'] = '1';
         config.headers['x-cb-host'] = domain;
         config.headers['x-cb-apiKey'] = this.configService.get<string>('cb.apiKey');
