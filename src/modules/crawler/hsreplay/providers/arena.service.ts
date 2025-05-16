@@ -91,14 +91,16 @@ export class ArenaService {
     for (const [className, cardsData] of Object.entries(arenaCardsData)) {
       if (!Array.isArray(cardsData)) continue;
 
-      classCardsData[className] = cardsData.map((card: IArenaCardResponse) => ({
-        class: className,
-        dbfId: card.dbf_id,
-        includedCount: card.included_count,
-        includedPopularity: card.included_popularity,
-        includedWinrate: card.included_winrate,
-        winrateWhenPlayed: card.winrate_when_played,
-      }));
+      classCardsData[className] = cardsData
+        .map((card: IArenaCardResponse) => ({
+          class: className,
+          dbfId: card.dbf_id,
+          includedCount: card.included_count,
+          includedPopularity: card.included_popularity,
+          includedWinrate: card.included_winrate,
+          winrateWhenPlayed: card.winrate_when_played,
+        }))
+        .filter((card) => card.includedCount >= 10);
     }
 
     this.logger.log(`成功爬取 ${Object.keys(classCardsData).length} 个职业的竞技场卡牌数据`);

@@ -67,9 +67,9 @@ export class CrawlerTaskService {
   }
 
   /**
-   * 狂野模式数据爬取 - 每两天中午12点
+   * 狂野模式数据爬取 - 每两天早上2点
    */
-  @Cron('0 12 */2 * *')
+  @Cron('0 2 */2 * *')
   async handleWildCrawlTask(): Promise<void> {
     this.logger.log('开始执行狂野模式爬虫任务');
     await this.crawlDataByMode(Mode.WILD);

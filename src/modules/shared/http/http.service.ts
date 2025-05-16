@@ -62,15 +62,20 @@ export class HttpService extends NestHttpService {
     // 添加请求拦截器，转换URL
     this.axiosRef.interceptors.request.use((config) => {
       const url = axios.getUri(config);
-
-      if ((HttpService.useCloudbypass && url.includes('hsguru.com')) || url.includes('hsreplay.net')) {
-        const urlObj = new URL(url);
-        const domain = urlObj.hostname;
-        const pathname = urlObj.pathname;
-        const search = urlObj.search;
-
+      const urlObj = new URL(url);
+      const domain = urlObj.hostname;
+      const pathname = urlObj.pathname;
+      const search = urlObj.search;
+      if (url.includes('hsreplay.net')) {
+        config.headers['x-cb-version'] = '1';
+        config.headers['x-cb-host'] = domain;
+        config.headers['x-cb-apiKey'] = this.configService.get<string>('cb.apiKey');
+      } else if (HttpService.useCloudbypass && url.includes('hsguru.com')) {
         config.url = `https://api.cloudbypass.com${pathname}${search}`;
         config.headers['x-cb-host'] = domain;
+        config.headers['x-cb-version'] = '2';
+        config.headers['x-cb-apiKey'] = this.configService.get<string>('cb.apiKey');
+        config.headers['x-cb-proxy'] = this.configService.get<string>('cb.proxy');
       }
 
       return config;
@@ -149,9 +154,6 @@ export class HttpService extends NestHttpService {
 
     if (HttpService.useCloudbypass) {
       headers['x-cb-part'] = `${queueIndex}`;
-      headers['x-cb-version'] = '2';
-      headers['x-cb-apiKey'] = this.configService.get<string>('cb.apiKey');
-      headers['x-cb-proxy'] = this.configService.get<string>('cb.proxy');
     }
 
     return {
