@@ -25,6 +25,7 @@ export interface IArenaCardResponse {
   included_popularity: number;
   included_winrate: number;
   winrate_when_played: number;
+  times_played: number;
 }
 
 interface IArenaCardsResponse {
@@ -85,6 +86,7 @@ export class ArenaService {
     const response = await this.httpService.fetchGet<IArenaCardsResponse>(this.arenaCardsUrl);
 
     const arenaCardsData = response.series.data;
+
     const classCardsData: Record<string, IArenaCard[]> = {};
 
     // 处理每个职业的卡牌数据
@@ -99,11 +101,13 @@ export class ArenaService {
           includedPopularity: card.included_popularity,
           includedWinrate: card.included_winrate,
           winrateWhenPlayed: card.winrate_when_played,
+          timesPlayed: card.times_played,
         }))
-        .filter((card) => card.includedCount >= 10);
+        .filter((card) => card.timesPlayed >= 10);
     }
 
     this.logger.log(`成功爬取 ${Object.keys(classCardsData).length} 个职业的竞技场卡牌数据`);
+
     return classCardsData;
   }
 
