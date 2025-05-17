@@ -12,8 +12,10 @@ async function bootstrap(): Promise<void> {
   const logger = new Logger('Bootstrap');
 
   // 创建应用实例
-  const app = middleware(await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter()));
-  const configService = app.get(ConfigService);
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
+  // 应用中间件
+  const configuredApp = await middleware(app);
+  const configService = configuredApp.get(ConfigService);
 
   // 获取配置参数
   const port = configService.get<number>('port') ?? 3000;
@@ -21,10 +23,10 @@ async function bootstrap(): Promise<void> {
   const apiPrefix = configService.get<string>('api.prefix') ?? 'api';
 
   // 设置全局前缀
-  app.setGlobalPrefix(apiPrefix);
+  configuredApp.setGlobalPrefix(apiPrefix);
 
   // 全局验证管道
-  app.useGlobalPipes(
+  configuredApp.useGlobalPipes(
     new ValidationPipe({
       transform: true, // 自动转换类型
       forbidNonWhitelisted: true, // 禁止非白名单属性
@@ -33,11 +35,11 @@ async function bootstrap(): Promise<void> {
 
   // Swagger文档配置
   const config = new DocumentBuilder().setTitle('炉石传说服务').setDescription('炉石传说服务API文档').setVersion('1.0').build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+  const document = SwaggerModule.createDocument(configuredApp, config);
+  SwaggerModule.setup('docs', configuredApp, document);
 
   // 启动应用
-  await app.listen(port, '0.0.0.0');
+  await configuredApp.listen(port, '0.0.0.0');
 
   // 记录启动信息
   logger.log(`服务模式: ${serviceMode.toUpperCase()}`);

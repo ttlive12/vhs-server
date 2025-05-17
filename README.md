@@ -7,9 +7,9 @@ NestJS选型：
 2. 生态丰富，可兼容大多数express生态
 
 性能优化：
-1. CacheManager
+1. CacheManager缓存
 2. compression压缩
-3. Fastify API（自动开启KeepAlive长链接）
+3. Fastify API（自动开启KeepAlive长链接） HTTP层面基于CacheControl和Etag的@fastify/caching的响应头缓存
 
 业务优化：
 1. 模块化，动态加载模块
