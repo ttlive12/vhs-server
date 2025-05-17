@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsOptional } from 'class-validator';
 import { Class } from '@/modules/shared';
 
 /**
@@ -7,8 +6,6 @@ import { Class } from '@/modules/shared';
  */
 export class GetArenaCardRankDto {
   @ApiProperty({ description: '英雄职业', enum: Class, example: Class.MAGE })
-  @IsEnum(Class)
-  @IsOptional()
   class?: Class;
 }
 

@@ -1,17 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
 
 /**
  * 添加特殊日期DTO
  */
 export class AddSpecialDateDto {
   @ApiProperty({ description: '日期，格式：YYYY.MM.DD，例如：2025.05.15' })
-  @IsNotEmpty()
   date: string;
 
   @ApiProperty({ description: '描述' })
-  @IsNotEmpty()
-  @IsString()
   description: string;
 }
 

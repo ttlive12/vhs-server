@@ -42,7 +42,7 @@ async function bootstrap(): Promise<void> {
   // 记录启动信息
   logger.log(`服务模式: ${serviceMode.toUpperCase()}`);
   logger.log(`服务已启动: http://0.0.0.0:${port}`);
-  logger.log(`API文档地址: http://0.0.0.0:${port}/docs`);
+  logger.log(`API文档地址: http://127.0.0.1:${port}/docs`);
 }
 
 // 启动应用

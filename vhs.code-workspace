@@ -21,4 +21,12 @@
       "path": ".",
     },
   ],
+  "settings": {
+    "cSpell.words": [
+      "Cloudbypass",
+      "hsguru",
+      "hsreplay",
+      "winrate"
+    ]
+  },
 }

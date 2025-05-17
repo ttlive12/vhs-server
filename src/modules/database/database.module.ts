@@ -64,8 +64,8 @@ const crawlerModelFactory = [
       useFactory: (configService: ConfigService) => ({
         uri: configService.get<string>('db.uri'),
         dbName: configService.get<string>('db.apiName'),
-        maxPoolSize: 30,
-        minPoolSize: 5,
+        maxPoolSize: 50,
+        minPoolSize: 10,
         socketTimeoutMS: 45_000,
         connectTimeoutMS: 30_000,
         serverSelectionTimeoutMS: 30_000,
