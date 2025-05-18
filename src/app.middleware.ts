@@ -3,12 +3,11 @@ import { HttpAdapterHost } from '@nestjs/core';
 import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 import compression from 'compression';
 
-import type { FastifyInstance } from 'fastify';
 import { AllExceptionsFilter, TimingInterceptor } from '@/modules/shared';
 
 export async function middleware(app: NestFastifyApplication): Promise<NestFastifyApplication> {
   // 获取Fastify实例
-  const fastifyInstance = app.getHttpAdapter().getInstance() as FastifyInstance;
+  const fastifyInstance = app.getHttpAdapter().getInstance();
 
   // 注册缓存插件
   await fastifyInstance.register(fastifyCaching, {
