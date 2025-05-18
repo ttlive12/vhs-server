@@ -52,20 +52,21 @@ export class ArchetypesService {
       return { rank, decks };
     });
 
-    // HTTP模块内部会通过队列管理并发，这里不需要手动控制并发
     const results = await Promise.all(tasks);
 
     // 统一更新数据库
     const operations = [];
     for (const { rank, decks } of results) {
       if (decks && decks.length > 0) {
-        const deckOperations = decks.map((deck) => ({
-          updateOne: {
-            filter: { name: deck.name, rank, mode },
-            update: { $set: { ...deck, rank, zhName: this.translationService.translate(deck.name), mode } },
-            upsert: true,
-          },
-        }));
+        const deckOperations = decks
+          .filter((deck) => deck.winrate >= 45 || deck.popularityPercent > 0.1) // 过滤掉胜率低于45%并且人气低于0.1%的卡组
+          .map((deck) => ({
+            updateOne: {
+              filter: { name: deck.name, rank, mode },
+              update: { $set: { ...deck, rank, zhName: this.translationService.translate(deck.name), mode } },
+              upsert: true,
+            },
+          }));
         operations.push(...deckOperations);
       }
     }
