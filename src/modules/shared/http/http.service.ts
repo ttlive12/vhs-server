@@ -40,7 +40,7 @@ export class HttpService extends NestHttpService {
 
         // 增加连续失败计数
         HttpService.consecutiveFailures++;
-        this.logger.log(`连续失败次数: ${HttpService.consecutiveFailures}/${HttpService.failureThreshold}`);
+        this.logger.log(`连续失败次数: ${HttpService.consecutiveFailures}`);
 
         // 如果连续失败次数超过阈值，启用cloudbypass
         if (HttpService.consecutiveFailures >= HttpService.failureThreshold && !HttpService.useCloudbypass) {
@@ -107,9 +107,12 @@ export class HttpService extends NestHttpService {
     HttpService.useCloudbypass = false;
     this.logger.log(`已禁用cloudbypass进行测试，当前状态: ${previousState}`);
 
+    // 创建一个无重试逻辑的干净axios实例
+    const testAxios = axios.create({ timeout: 10_000 });
+
     for (let i = 0; i < retries; i++) {
       try {
-        const response = await firstValueFrom(super.get(url, { timeout: 10_000 }));
+        const response = await testAxios.get(url);
 
         // 检查响应是否包含预期内容
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
