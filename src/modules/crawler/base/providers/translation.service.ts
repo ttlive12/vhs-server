@@ -85,6 +85,9 @@ export class TranslationService implements OnModuleInit {
     this.logger.log(`总共更新了 ${totalUpdated} 条记录`);
     this.logger.log(`发现 ${untranslatedNames.size} 个没有中文翻译的英文名`);
 
+    // 重新加载翻译缓存
+    await this.loadTranslationCache();
+
     return {
       updatedCount: totalUpdated,
       untranslatedNames: [...untranslatedNames],
@@ -108,8 +111,8 @@ export class TranslationService implements OnModuleInit {
     const records = await model.find({}, { name: 1, zhName: 1 });
 
     for (const record of records) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-      const englishName = (record as any).name;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const englishName = record.name;
       if (!englishName) continue;
 
       // 检查英文名是否有对应的中文翻译
@@ -123,12 +126,11 @@ export class TranslationService implements OnModuleInit {
       }
 
       // 如果中文名与翻译不一致，更新记录
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if ((record as any).zhName !== chineseName) {
+      if (record.zhName !== chineseName) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-        await model.updateOne({ _id: (record as any)._id }, { $set: { zhName: chineseName } });
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        await model.updateOne({ _id: record._id }, { $set: { zhName: chineseName } });
         updated += 1;
       }
     }
