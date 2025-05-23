@@ -41,11 +41,11 @@ export class ArchetypesService {
       // 对于每个段位，尝试不同的minGames值
       for (const minGames of ARCHETYPE_SEQUENCE[rank]) {
         decks = await this.crawlArchetypes(mode, rank, minGames);
-        if (decks.length >= 10) {
+        if (decks.length >= 15) {
           this.logger.log(`段位：${rank} 场次：${minGames || 'default'}, 成功获取 ${decks.length} 个卡组`);
           break;
         }
-        this.logger.log(`段位：${rank} 场次：${minGames || 'default'}, 成功获取 ${decks.length} 个卡组, 不足10个, 尝试降级获取`);
+        this.logger.log(`段位：${rank} 场次：${minGames || 'default'}, 成功获取 ${decks.length} 个卡组, 不足15个, 尝试降级获取`);
       }
 
       // 返回结果和相关信息，用于后续统一更新数据库
