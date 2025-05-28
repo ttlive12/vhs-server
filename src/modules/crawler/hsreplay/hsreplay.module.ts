@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 
-import { ArenaController } from './controllers';
-import { ArenaService } from './providers';
-import { CardsService } from '@/modules/crawler/base';
-import { DatabaseModule } from '@/modules/database/database.module';
+import { ArenaController, BattlegroundsCompsController } from './controllers';
+import { ArenaService, BattlegroundsCompsService } from './providers';
+import { CardsService } from '../base';
+import { DatabaseModule } from '@/modules/database';
 import { HttpModule } from '@/modules/shared';
 
 /**
@@ -17,8 +17,8 @@ import { HttpModule } from '@/modules/shared';
     }),
     DatabaseModule,
   ],
-  controllers: [ArenaController],
-  providers: [ArenaService, CardsService],
-  exports: [ArenaService],
+  controllers: [ArenaController, BattlegroundsCompsController],
+  providers: [ArenaService, BattlegroundsCompsService, CardsService],
+  exports: [ArenaService, BattlegroundsCompsService],
 })
 export class HsreplayModule {}

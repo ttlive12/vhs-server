@@ -6,3 +6,4 @@ export * from './deck-details';
 export * from './translation';
 export * from './config';
 export * from './arena';
+export * from './battlegrounds-comps';
