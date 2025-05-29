@@ -27,6 +27,8 @@ import {
   ArenaCardSchema,
   BattlegroundsComp,
   BattlegroundsCompSchema,
+  BattlegroundsCompDetail,
+  BattlegroundsCompDetailSchema,
 } from './schema';
 
 const baseModelFactory = [
@@ -44,6 +46,8 @@ const baseModelFactory = [
   { name: ArenaCard.name, schema: ArenaCardSchema },
   // 战棋流派数据
   { name: BattlegroundsComp.name, schema: BattlegroundsCompSchema },
+  // 战棋流派详细数据
+  { name: BattlegroundsCompDetail.name, schema: BattlegroundsCompDetailSchema },
 ];
 
 const apiModelFactory = [

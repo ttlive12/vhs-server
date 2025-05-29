@@ -1,2 +1,2 @@
 export * from './arena.service';
-export * from './battlegrounds-comps.service';
+export * from './battlegrounds.service';

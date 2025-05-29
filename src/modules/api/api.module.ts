@@ -4,11 +4,11 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 
 import { ArchetypesModule } from './archetypes/archetypes.module';
 import { ArenaModule } from './arena/arena.module';
+import { BattlegroundModule } from './battlegrounds/battlegrounds.module';
 import { ConfigModule } from './config/config.module';
 import { DeckDetailsModule } from './deckdetails/decks.module';
 import { DecksModule } from './decks/decks.module';
 import { MulliganModule } from './mulligan/mulligan.module';
-
 /**
  * API模块
  * 提供API接口服务
@@ -25,6 +25,7 @@ import { MulliganModule } from './mulligan/mulligan.module';
     DeckDetailsModule,
     ConfigModule,
     ArenaModule,
+    BattlegroundModule,
   ],
   controllers: [],
   providers: [

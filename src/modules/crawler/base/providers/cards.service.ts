@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { omit } from 'lodash';
 import { Model } from 'mongoose';
 
 import { InjectCrawlerModel } from '@/modules/database';
@@ -47,5 +48,30 @@ export class CardsService {
       throw new Error('卡牌不存在');
     }
     return card;
+  }
+
+  async getCardsByDbfId(dbfIds: number[]): Promise<ICard[]> {
+    const cards = await this.cardModel.find({ dbfId: { $in: dbfIds } }, {}, { lean: true });
+    return cards;
+  }
+
+  // 获取所有酒馆战旗卡牌
+  async getBattlegroundsCards(): Promise<Array<Partial<ICard>>> {
+    const spells = await this.cardModel.find({ isBattlegroundsPoolSpell: true }, {}, { lean: true });
+    const minions = await this.cardModel.find({ isBattlegroundsPoolMinion: true }, {}, { lean: true });
+
+    return [...spells, ...minions].map((card) => ({
+      ...omit(card, [
+        '_id',
+        '__v',
+        'cardClass',
+        'text',
+        'rarity',
+        'createdAt',
+        'updatedAt',
+        'isBattlegroundsPoolSpell',
+        'isBattlegroundsPoolMinion',
+      ]),
+    }));
   }
 }

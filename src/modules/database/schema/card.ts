@@ -57,6 +57,36 @@ export class Card extends Document {
    */
   @Prop()
   text: string;
+
+  /**
+   * 卡牌攻击力
+   */
+  @Prop()
+  attack: number;
+
+  /**
+   * 卡牌生命值
+   */
+  @Prop()
+  health: number;
+
+  /**
+   * 卡牌消耗铸币
+   */
+  @Prop()
+  techLevel: number;
+
+  /**
+   * 是否是酒馆战旗当前卡池法术
+   */
+  @Prop()
+  isBattlegroundsPoolSpell: boolean;
+
+  /**
+   * 是否是酒馆战旗当前卡池随从
+   */
+  @Prop()
+  isBattlegroundsPoolMinion: boolean;
 }
 
 export const CardSchema = SchemaFactory.createForClass(Card);
