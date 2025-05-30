@@ -87,6 +87,12 @@ export class Card extends Document {
    */
   @Prop()
   isBattlegroundsPoolMinion: boolean;
+
+  /**
+   * 关键词
+   */
+  @Prop()
+  mechanics: string[];
 }
 
 export const CardSchema = SchemaFactory.createForClass(Card);
