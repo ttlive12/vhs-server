@@ -8,12 +8,12 @@ import { DeckDetailService } from '../hsguru/providers/deckdetail.service';
 import { DecksService } from '../hsguru/providers/decks.service';
 import { MulliganService } from '../hsguru/providers/mulligan.service';
 import { ArenaService } from '../hsreplay/providers';
+import { BattlegroundsCompsService } from '../hsreplay/providers/battlegrounds.service';
 import { InjectApiModel } from '@/modules/database';
 import { DatabaseService } from '@/modules/database/database.service';
 import { Config } from '@/modules/database/schema';
 import { Mode } from '@/modules/shared';
 import { HttpService } from '@/modules/shared/http/http.service';
-
 /**
  * 爬虫定时任务服务
  * 提供卡组数据爬取功能，支持标准/狂野/竞技场模式
@@ -33,6 +33,7 @@ export class CrawlerTaskService {
     private readonly databaseService: DatabaseService,
     private readonly arenaService: ArenaService,
     private readonly httpService: HttpService,
+    private readonly battlegroundsService: BattlegroundsCompsService,
     @InjectApiModel(Config.name)
     private readonly configModel: Model<Config>,
   ) {}
@@ -87,6 +88,16 @@ export class CrawlerTaskService {
   }
 
   /**
+   * 酒馆战旗模式数据爬取 - 每天早上7点
+   */
+  @Cron(CronExpression.EVERY_DAY_AT_7AM)
+  async handleBattlegroundsCrawlTask(): Promise<void> {
+    this.logger.log('开始执行酒馆战旗模式爬虫任务');
+    await this.crawlBattlegroundsData();
+    this.logger.log('酒馆战旗模式爬虫任务执行完成');
+  }
+
+  /**
    * 爬取指定模式的数据
    * @param mode 游戏模式（标准/狂野/全部）
    */
@@ -125,6 +136,25 @@ export class CrawlerTaskService {
     await this.databaseService.syncCrawlerToApi();
 
     this.logger.log(`竞技场模式数据爬取完成, 当前时间: ${new Date().toISOString()}, 耗时: ${(Date.now() - start.getTime()) / 1000}秒`);
+  }
+
+  /**
+   * 爬取酒馆战旗数据
+   */
+  async crawlBattlegroundsData(): Promise<void> {
+    const start = new Date();
+    this.logger.log(`开始爬取酒馆战旗模式数据, 当前时间: ${start.toISOString()}`);
+
+    // 基础数据爬取：卡牌数据
+    await this.cardsService.getCards();
+
+    // 爬取酒馆战旗数据
+    await this.battlegroundsService.crawlAndSaveAllBattlegroundsCompDetails();
+
+    // 同步数据到api数据库
+    await this.databaseService.syncCrawlerToApi();
+
+    this.logger.log(`酒馆战旗模式数据爬取完成, 当前时间: ${new Date().toISOString()}, 耗时: ${(Date.now() - start.getTime()) / 1000}秒`);
   }
 
   /**
