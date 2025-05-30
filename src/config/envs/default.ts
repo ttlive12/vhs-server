@@ -22,4 +22,8 @@ export const config = {
     apiKey: process.env['CB_API_KEY'] ?? '241eeebbf0344cadbc9e1898ff7a068b',
     proxy: process.env['CB_PROXY'] ?? `http:s403:s403z@14.18.67.240:29100`,
   },
+  proxy: {
+    // eslint-disable-next-line sonarjs/no-clear-text-protocols
+    url: process.env['PROXY_URL'] ?? 'http://s403:s403z@14.18.67.240:29100',
+  },
 };
